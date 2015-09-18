@@ -17,3 +17,4 @@ class Command (Message):
 
 	def getValue(self):
 		return self.value
+	

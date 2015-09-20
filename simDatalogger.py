@@ -6,22 +6,26 @@ import random
 from Command import Command
 from Data import Data
 
-sys.path.append('/home/fabio/repositorioPPS/Communicator')
+sys.path.append('/home/fabio/Communicator')
 
 import communicator
 
-def inputCommand(queueCommand):
+def inputCommand(queueCommand, f):
 	while 1:
 		entrada = raw_input('>>')
 		if entrada[0] == 1:
 			comando = Command('Datalogger1','SENSE', 0)
 			queueCommand.put(comando)
+			f.write(comando.getCommand()+' '+comando.getValue())
 		elif entrada[0] == 2:
 			comando = Command('Datalogger1','SETFR', entrada[2:3])
-			queueCommand.put(comando)	
+			queueCommand.put(comando)
+			f.write(comando.getCommand()+' '+comando.getValue())	
 		elif entrada[0] == 3:
 			comando = Command('Datalogger1','STOP', 0)
 			queueCommand.put(comando)
+			f.write(comando.getCommand()+' '+comando.getValue())
+			f.close()
 		else:
 			print 'comando erroneo'
 
@@ -34,10 +38,10 @@ def receiveData(queueData):
 	while 1:
 		queueData.put(communicator.receive())
 
-def inputData(queueData):
+def inputData(queueData, f):
 	while 1:
 		dato = queueData.get()
-		print 'dato = ', dato.getValue(), ' ',dato.getUnit()
+		f.write(dato.getValue()+" "+dato.getUnit())
 
 try:
 	print '--------- Datalogger Simulator -----------'
@@ -48,11 +52,11 @@ try:
 	
 	queueCommand = Queue(10)
 	queueData = Queue(10)
-	
-	comando = threading.Thread(target=inputCommand, args=(queueCommand,))
+	f = open("datalogger.txt","w")
+	comando = threading.Thread(target=inputCommand, args=(queueCommand, f,))
 	enviacomando = threading.Thread(target=sendCommand, args=(queueCommand,))
 	recibedato = threading.Thread(target=receiveData, args=(queueData,))
-	dato = threading.Thread(target=inputData, args=(queueData,))
+	dato = threading.Thread(target=inputData, args=(queueData, f,))
 	
 except KeyboardInterrupt:
 	communicator.close()

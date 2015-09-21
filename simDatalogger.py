@@ -59,4 +59,6 @@ try:
 	dato = threading.Thread(target=inputData, args=(queueData, f,))
 	
 except KeyboardInterrupt:
+	f.close()
 	communicator.close()
+	

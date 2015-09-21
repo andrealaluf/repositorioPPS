@@ -42,9 +42,6 @@ class Ultrasonic(GPIOSensor):
 
 		return distance
 
-	def clearSensor(self):
-		GPIO.cleanup()
-
 	def getType(self):
 		return self.tipo
 		

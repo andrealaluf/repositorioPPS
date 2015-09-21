@@ -102,9 +102,6 @@ class HumidityTemperature(GPIOSensor):
 	def bin2dec(self, string_num):
 		return str(int(string_num, 2))
 
-	def clearSensor(self):
-		GPIO.cleanup()
-
 	def getType(self):
 		print self.tipo
 		

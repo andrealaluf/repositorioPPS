@@ -1,5 +1,6 @@
 import abc
 from Sensor import Sensor
+import RPi.GPIO as GPIO
 
 class GPIOSensor(Sensor):
 	__metaclass__ = abc.ABCMeta
@@ -8,6 +9,10 @@ class GPIOSensor(Sensor):
 		Sensor.__init__(self, frecuencia)
 		self.pins = pins		# ubicacion es un arreglo que contiene el numero de los pines en modo BCM
 
+	
+	def clearSensor(self):
+		GPIO.cleanup()
+	
 	def getGPIOpins(self):
 		return self.ubicacion
 

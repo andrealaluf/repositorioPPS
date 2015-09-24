@@ -19,8 +19,6 @@ GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 for i in range(0,500):
     data.append(GPIO.input(4))
 
-print data
-
 bit_count = 0
 tmp = 0
 count = 0

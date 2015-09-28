@@ -9,7 +9,6 @@ class GPIOSensor(Sensor):
 		Sensor.__init__(self, frecuencia)
 		self.pins = pins		# ubicacion es un arreglo que contiene el numero de los pines en modo BCM
 
-	
 	def clearSensor(self):
 		GPIO.cleanup()
 	

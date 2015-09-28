@@ -13,10 +13,10 @@ class Sensor(object):
 	def getFrequency(self):
 		return self.frecuencia
 
-	def setSense(self,value):
+	def setSenseFlag(self,value):
 		self.senseFlag = value
 
-	def getSense(self):
+	def getSenseFlag(self):
 		return self.senseFlag
 			  	
 	# def getCommand(self, command, value):

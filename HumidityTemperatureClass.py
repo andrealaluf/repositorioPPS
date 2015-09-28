@@ -68,11 +68,12 @@ class HumidityTemperature(GPIOSensor):
 						TemperatureBit = TemperatureBit + "0"
 		#	print "Humedad", HumidityBit
 		#	print "Temperatura", TemperatureBit
-			Humidity = self.bin2dec(HumidityBit)
+		#	Humidity = self.bin2dec(HumidityBit)
 			Temperature = self.bin2dec(TemperatureBit)
-			print "Humedad", Humidity
-			print "Temperatura", Temperature
+		#	print "Humedad", Humidity
+		#	print "Temperatura", Temperature
 			time.sleep(2)
+			return Temperature
 		except: 
 			print "ERR_RANGE"
 			exit(0)

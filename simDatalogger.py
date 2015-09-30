@@ -1,38 +1,40 @@
 #from communicator import communicator
+import os
 import sys
 import threading
 import Queue
 import random
+import communicator as com
+
+os.path.abspath('home/fabio/repositorioPPS')
+
 from Command import Command
 from Data import Data
 
-sys.path.append('/home/fabio/Communicator')
-
-import communicator
 
 def sendCommand(f):
 	while 1:
 		entrada = raw_input('>>')
 		if entrada[0] == 1:
 			comando = Command('Datalogger1','SENSE', 0)
-			communicator.send(comando.getSenderID(),comando,True)
+			com.send('client02',comando)
 			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))
 		elif entrada[0] == 2:
 			comando = Command('Datalogger1','SETFR', entrada[2:3])
-			communicator.send(comando.getSenderID(),comando,True)
+			com.send('client02',comando)
 			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))	
 		elif entrada[0] == 3:
 			comando = Command('Datalogger1','STOP', 0)
-			communicator.send(comando.getSenderID(),comando,True)
+			com.send('client02',comando)
 			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))
 			f.close()
 		else:
 			print 'comando erroneo'
 
-def receiveData(queueData):
+def receiveData():
 	while 1:
-		if communicator.len() != 0:
-			dato = communicator.receive()
+		if com.lenght() > 0:
+			dato = com.receive()
 			f.write(dato.getValue()+" "+dato.getUnit()+"  --  "+time.strftime("H:M:S"))
 
 try:
@@ -42,12 +44,18 @@ try:
 	print '3 - STOP'
 	
 	f = open("datalogger.txt","w")
-	communicator.open()
+	com.open()
 		
-	enviacomando = threading.Thread(target=sendCommand, args=(queueCommand,))
-	recibedato = threading.Thread(target=receiveData, args=(queueData,))
+	enviacomando = threading.Thread(target=sendCommand)
+	recibedato = threading.Thread(target=receiveData)
+	
+	enviacomando.start()
+	recibedato.start()
+	
+	while True:
+		pass
 	
 except KeyboardInterrupt:
 	f.close()
-	communicator.close()
+	com.close()
 	

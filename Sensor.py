@@ -19,14 +19,6 @@ class Sensor(object):
 	def getSenseFlag(self):
 		return self.senseFlag
 			  	
-	# def getCommand(self, command, value):
-	# 	if command == 'SENSE':
-	# 		self.sense()
-	# 	elif command == 'SETFR':
-	# 		self.setFrequency(value)
-	# 	else:
-	# 		self.clearSensor()
-	
 # ---------------- Metodos abstractos --------------------
 	
 	@abc.abstractmethod	

@@ -3,9 +3,8 @@ from Message import Message
 class Command (Message):
 	
 	# Constructor
-	def __init__(self, senderID, command,value):
-		Message.__init__(self,senderID)
-		self.senderID = senderID
+	def __init__(self, senderID, receiverID, command,value):
+		Message.__init__(self,senderID, receiverID)
 		self.command = command
 		self.value = value
 

@@ -7,3 +7,6 @@ class Message (object):
 	def getReceiver(self):
 		return self.receiverID
 	
+	def getSender(self):
+		return self.senderID
+	

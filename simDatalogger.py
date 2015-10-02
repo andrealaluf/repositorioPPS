@@ -2,58 +2,86 @@
 import os
 import sys
 import threading
-import Queue
 import random
+import time
+import pprint
 import communicator as com
 
-os.path.abspath('home/fabio/repositorioPPS')
+sys.path.insert(0, '/home/fabio/repositorioPPS')
 
 from Command import Command
 from Data import Data
 
+sensorReceiver = 	{
+						'1':"USND",
+						'2':"TEMP"
+					};
+
+command = 	{
+				'1':"SENS",
+				'2':"SETF",
+				'3':"STOP"
+			};
 
 def sendCommand(f):
-	while 1:
-		entrada = raw_input('>>')
-		if entrada[0] == 1:
-			comando = Command('Datalogger1','SENSE', 0)
-			com.send('client02',comando)
-			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))
-		elif entrada[0] == 2:
-			comando = Command('Datalogger1','SETFR', entrada[2:3])
-			com.send('client02',comando)
-			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))	
-		elif entrada[0] == 3:
-			comando = Command('Datalogger1','STOP', 0)
-			com.send('client02',comando)
-			f.write(comando.getCommand()+' '+comando.getValue()+"  --  "+time.strftime("H:M:S"))
-			f.close()
+	while len(sensorReceiver) > 0:
+		print '--------- Datalogger Simulator -----------'
+		print 'Ingrese uno de los siguientes comandos:'
+		for key,val in sorted(command.items()):
+			print " "*5,key, ":", val
+		commandInput = raw_input('>>')
+		if command.has_key(commandInput):	
+			print 'Ingrese un sensor destinatario'
+			for key,val in sorted(sensorReceiver.items()):
+				print " "*5,key, ":", val
+			sensorInput = raw_input('>>')
+			if sensorReceiver.has_key(sensorInput):
+				if commandInput == '1':
+					frequency = '0'
+					#comando = Command('client02',sensorInput,'SENSE', 0)
+				elif commandInput == '2':
+					print 'Ingrese una valor de frecuencia'
+					frequency = raw_input('>>')
+					#comando = Command('client02',sensorInput,'SETFR', int(frequency))
+				else:
+					frequency = '0'
+					#comando = Command('client02',sensorInput,'STOP', 0)
+					
+				comando = sensorReceiver[sensorInput]+' '+command[commandInput]+' '+frequency
+				com.send('client02',comando)
+				f.write(comando + "  --  " + time.strftime("%H:%M:%S")+'\n')
+				if commandInput == '3':
+					del sensorReceiver[sensorInput];
+			else: 
+				print 'el sensor no existe\n'
 		else:
-			print 'comando erroneo'
+			print 'comando erroneo\n'
+	exit(0)
 
-def receiveData():
-	while 1:
+def receiveData(f):
+	while len(sensorReceiver) > 0:
 		if com.lenght() > 0:
-			dato = com.receive()
-			f.write(dato.getValue()+" "+dato.getUnit()+"  --  "+time.strftime("H:M:S"))
+			dato = com.recieve()
+			#f.write(str(dato.getValue())+" "+dato.getUnit()+"  --  "+time.strftime("%H:%M:%S")+'\n')
+			f.write(dato + "  --  " + time.strftime("%H:%M:%S") + '\n')
+	exit(0)
 
 try:
-	print '--------- Datalogger Simulator -----------'
-	print '1 - SENSE'
-	print '2 - SETFR <freq>'
-	print '3 - STOP'
-	
 	f = open("datalogger.txt","w")
 	com.open()
-		
-	enviacomando = threading.Thread(target=sendCommand)
-	recibedato = threading.Thread(target=receiveData)
+
+	enviacomando = threading.Thread(target=sendCommand, args=(f,))
+	recibedato = threading.Thread(target=receiveData, args=(f,))
 	
 	enviacomando.start()
 	recibedato.start()
 	
-	while True:
+	while len(sensorReceiver) > 0:
 		pass
+	print 'cerrando'
+	f.close()
+	com.close()
+	exit(0)
 	
 except KeyboardInterrupt:
 	f.close()

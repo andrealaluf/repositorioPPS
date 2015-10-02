@@ -12,8 +12,8 @@ class LinuxSensor(GPIOSensor):
 	def setGPIOpins(self):
 		pass
 
-	def getData(self):
-		return Data(self.tipo, self.sense(), "cm")
+	def getData(self, receiver):
+		return Data(self.tipo, receiver, self.sense(), "cm")
 		
 	def clearSensor(self):
 		pass

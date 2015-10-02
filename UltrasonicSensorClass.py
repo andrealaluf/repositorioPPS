@@ -18,8 +18,8 @@ class Ultrasonic(GPIOSensor):
 		GPIO.setup(self.TRIG,GPIO.OUT) 
 		GPIO.setup(self.ECHO,GPIO.IN)
 
-	def getData(self):
-		return Data(self.tipo, self.sense(), "cm")
+	def getData(self, receiver):
+		return Data(self.tipo, receiver,self.sense(), "cm")
 
 	def sense(self):
 		GPIO.output(self.TRIG,False)

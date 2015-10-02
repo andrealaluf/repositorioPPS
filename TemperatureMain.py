@@ -10,12 +10,12 @@ def readSensor(data):
     while 1:
         condition.acquire()
         frequency = sensor.getFrequency()
-        if (sensor.getSense() == False) & (frequency == 0):
+        if (sensor.getSenseFlag() == False) & (frequency == 0):
             condition.wait()
         else:
             condition.wait(frequency)
             print 'estoy sensando'
-            data.put(sensor.getData())
+            data.put(sensor.getData('client'))
         condition.release()
         
 def readData (data):
@@ -28,12 +28,12 @@ def receiveCommand (command):
         comando = command.get(True)
         condition.acquire()
         if comando.getCommand() == 'SENSE':
-            sensor.setSense(True)
+            sensor.setSenseFlag(True)
         else:
-            sensor.setSense(False)
+            sensor.setSenseFlag(False)
 
         sensor.setFrequency(comando.getValue())
-        if (sensor.getFrequency() > 0) | (sensor.getSense() == True):
+        if (sensor.getFrequency() > 0) | (sensor.getSenseFlag() == True):
             condition.notify()
         condition.release()
         command.task_done()
@@ -46,10 +46,10 @@ def setCommand (command):
         oldFrequency = frequency
         if commandValue == 1:
             frequency = random.uniform(5,10)
-            command.put(Command(13,'SETFR', frequency))
+            command.put(Command('13','client','SETFR', frequency))
             print 'SETFR ', frequency
         else:
-            command.put(Command(13,'SENSE', oldFrequency))
+            command.put(Command('13','client','SENSE', oldFrequency))
             print 'SENSE'
         time.sleep(random.uniform(1,20))
 

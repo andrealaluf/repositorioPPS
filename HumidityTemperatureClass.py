@@ -15,8 +15,8 @@ class HumidityTemperature(GPIOSensor):
 	def setGPIOpins(self):
 		self.OUT = self.pins[0]
 
-	def getData(self):
-		return Data(self.tipo, self.sense(), "C")
+	def getData(self, receiver):
+		return Data(self.tipo,receiver, self.sense(), "C")
 
 	def sense(self):
 		data = []

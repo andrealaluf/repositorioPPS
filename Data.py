@@ -2,8 +2,8 @@ from Message import Message
 
 class Data (Message):
 	
-	def __init__(self, senderID, receiverID, data, unit):
-		Message.__init__(self,senderID, receiverID)
+	def __init__(self, receiverID, senderID, priority, timeOut, device, command, value):
+		Message.__init__(self, receiverID, senderID, priority, timeOut, device)
 		self.data = data
 		self.unit = unit
 

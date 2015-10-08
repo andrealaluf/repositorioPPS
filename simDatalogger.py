@@ -13,13 +13,13 @@ from Command import Command
 from Data import Data
 
 sensorReceiver = 	{
-						'1':"USND",
-						'2':"TEMP"
+						'1':"ULTRASONIC",
+						'2':"TEMPERATURE"
 					};
 
 command = 	{
-				'1':"SENS",
-				'2':"SETF",
+				'1':"SENSE",
+				'2':"SETFR",
 				'3':"STOP"
 			};
 
@@ -37,19 +37,19 @@ def sendCommand(f):
 			sensorInput = raw_input('>>')
 			if sensorReceiver.has_key(sensorInput):
 				if commandInput == '1':
-					frequency = '0'
-					#comando = Command('client02',sensorInput,'SENSE', 0)
+					frequency = 0
+					#comando = Command('client02', 'client03', 5, 100,' ',commanInput, 0)
 				elif commandInput == '2':
 					print 'Ingrese una valor de frecuencia'
 					frequency = raw_input('>>')
 					#comando = Command('client02',sensorInput,'SETFR', int(frequency))
 				else:
-					frequency = '0'
+					frequency = 0
 					#comando = Command('client02',sensorInput,'STOP', 0)
 					
-				comando = sensorReceiver[sensorInput]+' '+command[commandInput]+' '+frequency
-				com.send('client02',comando)
-				f.write(comando + "  --  " + time.strftime("%H:%M:%S")+'\n')
+				comando = Command('client02', sensorReceiver[sensorInput], 5, 100, ' ',command[commandInput], frequency)
+				com.send(comando)
+				f.write(comando.getCommand() + ' ' +comando.getFrequency()+ "  --  " + time.strftime("%H:%M:%S")+'\n')
 				if commandInput == '3':
 					del sensorReceiver[sensorInput];
 			else: 

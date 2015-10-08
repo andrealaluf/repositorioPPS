@@ -7,13 +7,11 @@ try:
 	TRIG = 23
 	ECHO = 24
 
-	print "Medicion de distancia en progreso"
-
 	GPIO.setup(TRIG,GPIO.OUT)
 	GPIO.setup(ECHO,GPIO.IN)
 
 	GPIO.output(TRIG,GPIO.LOW)
-	print "Espere la resolucion del sensor"
+
 	time.sleep(2)
 
 	GPIO.output(TRIG,True)

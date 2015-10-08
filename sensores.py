@@ -16,8 +16,8 @@ import Command
 
 # Declara diccionario asumiendo un par de sensores activos
 sensorDict = 	{	
-					'USND':0,
-					'TEMP':1	
+					'ULTRASONIC':0,
+					'TEMPERATURE':1	
 				};
 
 def readCommand(sensorList, conditionList):
@@ -28,27 +28,25 @@ def readCommand(sensorList, conditionList):
 		# Pregunta si hay mensajes por recibir
 		if com.lenght() > 0: 
 			# Recibe el mensaje  en cola
-			comando = com.recieve()
-			parsedCommand = comando.split(' ')
-			print parsedCommand
+			comando = com.receive()
 			
-			#sensorNumber = sensorDict[comando.getReceiver()]
-			sensorNumber = sensorDict[parsedCommand[0]]
+			sensorNumber = sensorDict[comando.getReceiver()]
+			#sensorNumber = sensorDict[parsedCommand[0]]
 			
 			# Adquiere el lock sobre la condicion para garantizar la 
 			# exclusion mutua sobre las variables compartidas
 			conditionList[sensorNumber].acquire()
 			
 			# interpreta los comandos  y actua de acuerdo a lo recibido
-			if (parsedCommand[1] == "SENS") | (parsedCommand[1] == "SETF"):	
+			if (comando.getCommand() == "SENSE") | (comando.getCommand() == "SETFR"):	
 				sensorList[sensorNumber].setSenseFlag(True)
-				#sensorList[sensorNumber].setFrequency(comando.getValue())
-				sensorList[sensorNumber].setFrequency(int(parsedCommand[2]))				
+				sensorList[sensorNumber].setFrequency(comando.getValue())
+				#sensorList[sensorNumber].setFrequency(int(parsedCommand[2]))				
 			else:
 				# Si se recibe un STOP sobre un determinado sensor, 
 				# se lo elimina del diccionario
 				sensorList[sensorNumber].setSenseFlag(False)
-				del sensorDict[parsedCommand[0]];
+				del sensorDict[comando.getReceiver()];
 			
 			# Despierta los hilos dormidos bajo la condicion y libera el bloqueo
 			conditionList[sensorNumber].notify()
@@ -68,9 +66,9 @@ def sendData(sensor, condition, key):
 			condition.wait(sensor.getFrequency())		
 			
 			# Se prepara el dato y se lo envia
-			dato = sensor.getData('client03')
-			datoAEnviar = str(dato.getData()) + ' ' + dato.getUnit()
-			com.send('client03', datoAEnviar)
+			dato = sensor.getData('client03', 5,100,' ')
+			#datoAEnviar = str(dato.getData()) + ' ' + dato.getUnit()
+			com.send(dato)
 			
 			# Si el comando recibido es un SENSE, espera por un nuevo comando que 
 			# despierte el hilo
@@ -94,10 +92,10 @@ if __name__ == '__main__':
 		
 		# Declara una variable Condition y lanza un hilo por cada sensor
 		conditions.append(threading.Condition())
-		ultsnd = threading.Thread(target = sendData, args=(sensors[0], conditions[0], 'USND'))		
+		ultsnd = threading.Thread(target = sendData, args=(sensors[0], conditions[0], 'ULTRASONIC'))		
 		
 		conditions.append(threading.Condition())
-		temp = threading.Thread(target = sendData, args=(sensors[1], conditions[1], 'TEMP'))	
+		temp = threading.Thread(target = sendData, args=(sensors[1], conditions[1], 'TEMPERATURE'))	
 		
 		# Declara hilo para la recepcion de comandos
 		receiver = threading.Thread(target = readCommand, args=(sensors, conditions))

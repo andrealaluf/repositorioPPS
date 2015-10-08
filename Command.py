@@ -1,12 +1,11 @@
 import sys
 
-sys.path.index(0,'/home/fabio/Communicator' )
+sys.path.insert(0,'/home/fabio/Communicator' )
 
 from messageClass import Message
 
 class Command (Message):
 	
-	# Constructor
 	def __init__(self, receiverID, senderID, priority, timeOut, device, command, value):
 		Message.__init__(self, receiverID, senderID, priority, timeOut, device)
 		self.command = command

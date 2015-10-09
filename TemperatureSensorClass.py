@@ -71,7 +71,7 @@ class HumidityTemperature(GPIOSensor):
 			time.sleep(2)
 			return Temperature
 		except: 
-			print "ERR_RANGE"
+			return "ERR_RANGE"
 	
 	def bin2dec(self, string_num):
 		return str(int(string_num, 2))
